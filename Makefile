@@ -1,6 +1,6 @@
 .DEFAULT_GOAL := default
 
-IMAGE ?= rg.fr-par.scw.cloud/averagemarcus-private/online-exporter:latest
+IMAGE ?= rg.fr-par.scw.cloud/averagemarcus/online-exporter:latest
 
 .PHONY: test # Run all tests, linting and format checks
 test: lint check-format run-tests
