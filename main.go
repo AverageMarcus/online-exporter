@@ -31,8 +31,13 @@ func init() {
 func main() {
 	go (func() {
 		for {
-			checkOnline()
-			time.Sleep(time.Minute * time.Duration(interval))
+			result, wait := checkOnline()
+			if result {
+				isOnline = 1
+			} else {
+				isOnline = 0
+			}
+			time.Sleep(time.Minute * time.Duration(wait))
 		}
 	})()
 
@@ -42,15 +47,17 @@ func main() {
 	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%d", port), nil))
 }
 
-func checkOnline() {
+func checkOnline() (bool, int) {
 	client := http.Client{
 		Timeout: time.Duration(timeout) * time.Millisecond,
 	}
 	_, err := client.Get(endpoint)
 	if err != nil {
-		isOnline = 0
+		fmt.Printf("Failed to access endpoint: %v\n", err)
+		// Re-check again after a minute when internet down
+		return false, 1
 	} else {
-		isOnline = 1
+		return true, interval
 	}
 }
 
